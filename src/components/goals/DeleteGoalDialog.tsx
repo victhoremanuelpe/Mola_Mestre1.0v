@@ -44,7 +44,7 @@ export function DeleteGoalDialog({
           </Button>
           <Button
             variant="destructive"
-            onClick={() => goal && onConfirm(goal._id)}
+            onClick={() => goal && onConfirm(goal.id)}
             disabled={isLoading}
           >
             {isLoading ? "Excluindo..." : "Sim, Excluir"}

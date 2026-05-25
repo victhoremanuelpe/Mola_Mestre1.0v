@@ -61,13 +61,13 @@ export default function ActivesPage() {
 
   const tickersUserHas = portfolio.map((p) => p.ticker);
 
-  const { data: quotes } = useQuery({
-    queryKey: ["quotes", tickersUserHas],
-    queryFn: () => fetchStocks(tickersUserHas),
-    enabled: tickersUserHas.length > 0,
-    refetchInterval: 1000 * 60 * 5,
-    staleTime: 1000 * 60 * 2,
-  });
+const { data: quotes } = useQuery({
+  queryKey: ["quotes", tickersUserHas.join(",")],
+  queryFn: () => fetchStocks(tickersUserHas),
+  enabled: tickersUserHas.length > 0,
+  refetchInterval: 1000 * 60 * 5, 
+  staleTime: 1000 * 60 * 2,       
+});
 
   const finalData = useMemo(() => {
     let patrimonioTotal = 0;

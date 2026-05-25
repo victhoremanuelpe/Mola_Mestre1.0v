@@ -90,7 +90,7 @@ export default function GoalsPage() {
         >
           {goals?.map((goal) => (
             <GoalCard
-              key={goal._id}
+              key={goal.id}
               goal={goal}
               onAddValue={handleOpenAddValue}
               onDelete={handleOpenDelete}

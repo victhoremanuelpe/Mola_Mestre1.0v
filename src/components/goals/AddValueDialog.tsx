@@ -35,7 +35,7 @@ export function AddValueDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (goal && amount) {
-      onSubmit(goal._id, Number(amount));
+      onSubmit(goal.id, Number(amount));
       setAmount("");
     }
   };

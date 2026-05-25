@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -10,11 +10,26 @@ import { Loader2, Mail, Lock, LogIn } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { LoginFormData, LoginResponse } from "@/types/auth";
 import { ApiError } from "@/types/api";
+import { createClientComponentClient } from "@/lib/supabase"; // Mantém a importação nomeada estrita
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  
+  // Inicializa o cliente biding com o escopo correto do navegador
+  const supabase = createClientComponentClient(); 
+
+  // Redirecionamento rápido e seguro via Session State do Supabase
+  useEffect(() => {
+    async function checkSession() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        router.push("/dashboard");
+      }
+    }
+    checkSession();
+  }, [router, supabase]);
 
   const mutation = useMutation<
     LoginResponse,

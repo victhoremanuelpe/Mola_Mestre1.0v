@@ -1,19 +1,33 @@
 import { NextResponse } from "next/server";
-import dbConnect from "@/lib/mongodb";
-import Transaction from "@/lib/models/transaction";
-import { verifyAuth } from "@/lib/auth";
+import { createServerComponentClient } from "@/lib/supabaseServer";
 
-export async function GET(request: Request) {
+// Função utilitária para capturar e validar o usuário logado
+async function getAuthenticatedUser(supabase: any) {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) throw new Error("Não autorizado");
+  return user;
+}
+
+// 1. BUSCAR HISTÓRICO DE TRANSAÇÕES (GET)
+export async function GET() {
   try {
-    await dbConnect();
-    const user = await verifyAuth(request);
+    const supabase = await createServerComponentClient();
+    const user = await getAuthenticatedUser(supabase);
 
-    const transactions = await Transaction.find({ userId: user.id }).sort({
-      data: -1,
-    });
+    // Busca todas as transações do usuário ordenadas pela data da operação (decrescente)
+    const { data: transactions, error } = await supabase
+      .from("transactions")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("data", { ascending: false });
+
+    if (error) throw error;
 
     return NextResponse.json(transactions);
-  } catch {
+  } catch (error: any) {
+    if (error.message === "Não autorizado") {
+      return NextResponse.json({ erro: "Não autorizado" }, { status: 401 });
+    }
     return NextResponse.json(
       { erro: "Erro ao buscar transações" },
       { status: 500 }
@@ -21,32 +35,41 @@ export async function GET(request: Request) {
   }
 }
 
+// 2. REGISTRAR NOVA OPERAÇÃO (POST)
 export async function POST(request: Request) {
   try {
-    await dbConnect();
-    const user = await verifyAuth(request);
+    const supabase = await createServerComponentClient();
+    const user = await getAuthenticatedUser(supabase);
+    
     const body = await request.json();
-
     const { ticker, tipo, quantidade, preco, data } = body;
 
+    // Validação de campos obrigatórios
     if (!ticker || !tipo || !quantidade || !preco) {
       return NextResponse.json({ erro: "Dados incompletos" }, { status: 400 });
     }
 
     const qtdNumber = Number(quantidade);
 
+    // Validação de saldo caso a operação seja de VENDA
     if (tipo === "VENDA") {
-      const historicoAtivo = await Transaction.find({
-        userId: user.id,
-        ticker: ticker,
-      });
+      // Busca apenas o histórico do ativo específico para este usuário
+      const { data: historicoAtivo, error: fetchError } = await supabase
+        .from("transactions")
+        .select("tipo, quantidade")
+        .eq("user_id", user.id)
+        .eq("ticker", ticker);
 
-      const saldoAtual = historicoAtivo.reduce((acc, tx) => {
-        if (tx.tipo === "COMPRA") return acc + tx.quantidade;
-        if (tx.tipo === "VENDA") return acc - tx.quantidade;
+      if (fetchError) throw fetchError;
+
+      // Calcula o saldo atual acumulado em carteira
+      const saldoAtual = (historicoAtivo || []).reduce((acc, tx) => {
+        if (tx.tipo === "COMPRA") return acc + Number(tx.quantidade);
+        if (tx.tipo === "VENDA") return acc - Number(tx.quantidade);
         return acc;
       }, 0);
 
+      // Bloqueia a venda se a quantidade solicitada for maior que o saldo em carteira
       if (qtdNumber > saldoAtual) {
         return NextResponse.json(
           {
@@ -57,21 +80,34 @@ export async function POST(request: Request) {
       }
     }
 
-    const newTransaction = await Transaction.create({
-      userId: user.id,
-      ticker,
-      tipo,
-      quantidade: qtdNumber,
-      preco: Number(preco),
-      data: data || new Date(),
-    });
+    // Insere o novo registro no PostgreSQL via Supabase
+    const { data: newTransaction, error: insertError } = await supabase
+      .from("transactions")
+      .insert([
+        {
+          user_id: user.id,
+          ticker,
+          tipo,
+          quantidade: qtdNumber,
+          preco: Number(preco),
+          data: data || new Date().toISOString(),
+        }
+      ])
+      .select()
+      .single();
 
+    if (insertError) throw insertError;
+
+    // Mantém o exato formato de resposta que o frontend já consome
     return NextResponse.json(
       { msg: "Lançamento adicionado!", transaction: newTransaction },
       { status: 201 }
     );
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    console.error("Erro na transação:", error);
+    if (error.message === "Não autorizado") {
+      return NextResponse.json({ erro: "Não autorizado" }, { status: 401 });
+    }
     return NextResponse.json(
       { erro: "Erro ao criar transação" },
       { status: 500 }
