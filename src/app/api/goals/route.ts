@@ -14,7 +14,6 @@ export async function GET(request: Request) {
     const supabase = await createServerComponentClient();
     const user = await getAuthenticatedUser(supabase);
 
-    // Busca ordenando primeiro por prioridade (true primeiro) e depois por criação
     const { data: goals, error } = await supabase
       .from("goals")
       .select("*")
@@ -24,9 +23,18 @@ export async function GET(request: Request) {
 
     if (error) throw error;
 
-    // O Frontend do MongoDB costuma esperar o campo 'id' mapeado. 
-    // Mapeamos o 'id' do Postgres para manter compatibilidade total se necessário.
-    return NextResponse.json(goals);
+    // Normaliza os nomes dos campos para manter compatibilidade total com o frontend antigo
+    const frontendGoals = goals?.map((goal) => ({
+      id: goal.id,
+      title: goal.title,
+      targetAmount: goal.target_amount,   // Transforma snake_case para camelCase
+      currentAmount: goal.current_amount, // Transforma snake_case para camelCase
+      deadline: goal.deadline,
+      priority: goal.priority,
+      created_at: goal.created_at
+    }));
+
+    return NextResponse.json(frontendGoals);
   } catch (error: any) {
     if (error.message === "Não autorizado") {
       return NextResponse.json({ erro: "Não autorizado" }, { status: 401 });
