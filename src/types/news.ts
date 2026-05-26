@@ -14,7 +14,10 @@ export interface NewsItem {
   title: string;
   excerpt: string;
   content: string;
+  image: string;     
   time: string;
   readTime: string;
+  source: string;    
+  url: string;
   sentiment: NewsSentiment;
 }

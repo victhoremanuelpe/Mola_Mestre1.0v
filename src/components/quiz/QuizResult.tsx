@@ -25,141 +25,73 @@ type FeedbackContent = {
   links: { title: string; url: string }[];
 };
 
-const feedbackMap: Record<
-  string,
-  Record<"ruim" | "medio" | "bom", FeedbackContent>
-> = {
-  Fácil: {
+const feedbackMap: Record<string, Record<"ruim" | "medio" | "bom", FeedbackContent>> = {
+  facil: {
     ruim: {
-      message:
-        "Você está no início. Recomendamos estudar: O que é inflação, Juros Compostos e o Tripé Macroeconômico.",
+      message: "Você está no início. Recomendamos estudar: O que é inflação, Juros Compostos e o Tripé Macroeconômico.",
       links: [
-        {
-          title: "Calculadora de Juros Compostos (Mobills)",
-          url: "https://www.mobills.com.br/calculadoras/calculadora-juros-compostos/",
-        },
-        {
-          title: "Entenda o Tripé Macroeconômico (Politize!)",
-          url: "https://www.politize.com.br/tripe-macroeconomico/",
-        },
+        { title: "Calculadora de Juros Compostos (Mobills)", url: "https://www.mobills.com.br/calculadoras/calculadora-juros-compostos/" },
+        { title: "Entenda o Tripé Macroeconômico (Politize!)", url: "https://www.politize.com.br/tripe-macroeconomico/" },
       ],
     },
     medio: {
-      message:
-        "Bom começo! Aprofunde-se em: Renda Fixa (CDB, Tesouro Direto) e Reserva de Emergência.",
+      message: "Bom começo! Aprofunde-se em: Renda Fixa (CDB, Tesouro Direto) e Reserva de Emergência.",
       links: [
-        {
-          title: "Simulador do Tesouro Direto",
-          url: "https://www.tesourodireto.com.br/simulador/",
-        },
-        {
-          title: "Guia da Reserva de Emergência (Nubank)",
-          url: "https://blog.nubank.com.br/reserva-de-emergencia/",
-        },
+        { title: "Simulador do Tesouro Direto", url: "https://www.tesourodireto.com.br/simulador/" },
+        { title: "Guia da Reserva de Emergência (Nubank)", url: "https://blog.nubank.com.br/reserva-de-emergencia/" },
       ],
     },
     bom: {
-      message:
-        "Excelente base! Você já domina os conceitos iniciais. Hora de avançar para o nível Médio.",
+      message: "Excelente base! Você já domina os conceitos iniciais. Hora de avançar para o nível Médio.",
       links: [
-        {
-          title: "Diferença: Renda Fixa x Variável (B3)",
-          url: "https://edu.b3.com.br/",
-        },
-        {
-          title: "Introdução aos Fundos Imobiliários",
-          url: "https://statusinvest.com.br/fundos-imobiliarios",
-        },
+        { title: "Diferença: Renda Fixa x Variável (B3)", url: "https://edu.b3.com.br/" },
+        { title: "Introdução aos Fundos Imobiliários", url: "https://statusinvest.com.br/fundos-imobiliarios" },
       ],
     },
   },
-
-  Médio: {
+  medio: {
     ruim: {
-      message:
-        "O nível subiu! Recomendamos revisar: Indicadores fundamentalistas (P/L, ROE) e a diferença entre Renda Fixa e Variável.",
+      message: "O nível subiu! Recomendamos revisar: Indicadores fundamentalistas (P/L, ROE) e a diferença entre Renda Fixa e Variável.",
       links: [
-        {
-          title: "Indicadores: O que é P/L e ROE?",
-          url: "https://investnews.com.br/guias/analise-fundamentalista/",
-        },
-        {
-          title: "Comparador de Fundos de Investimento",
-          url: "https://maisretorno.com/comparacao-fundos",
-        },
+        { title: "Indicadores: O que é P/L e ROE?", url: "https://investnews.com.br/guias/analise-fundamentalista/" },
+        { title: "Comparador de Fundos de Investimento", url: "https://maisretorno.com/comparacao-fundos" },
       ],
     },
     medio: {
-      message:
-        "Você está no caminho. Estude mais sobre: Fundos Imobiliários (FIIs) e Diversificação de Carteira.",
+      message: "Você está no caminho. Estude mais sobre: Fundos Imobiliários (FIIs) e Diversificação de Carteira.",
       links: [
-        {
-          title: "Ranking de FIIs (Clube FII)",
-          url: "https://www.clubefii.com.br/",
-        },
-        {
-          title: "A importância da Diversificação (Suno)",
-          url: "https://www.suno.com.br/artigos/diversificacao/",
-        },
+        { title: "Ranking de FIIs (Clube FII)", url: "https://www.clubefii.com.br/" },
+        { title: "A importância da Diversificação (Suno)", url: "https://www.suno.com.br/artigos/diversificacao/" },
       ],
     },
     bom: {
-      message:
-        "Ótimo desempenho! Você entende bem a dinâmica do mercado. Tente o nível Difícil.",
+      message: "Ótimo desempenho! Você entende bem a dinâmica do mercado. Tente o nível Difícil.",
       links: [
-        {
-          title: "Introdução a Derivativos e Opções",
-          url: "https://www.infomoney.com.br/guias/opcoes/",
-        },
-        {
-          title: "Análise Técnica vs Fundamentalista",
-          url: "https://corretora.rico.com.vc/blog/analise-tecnica-e-fundamentalista",
-        },
+        { title: "Introdução a Derivativos e Opções", url: "https://www.infomoney.com.br/guias/opcoes/" },
+        { title: "Análise Técnica vs Fundamentalista", url: "https://corretora.rico.com.vc/blog/analise-tecnica-e-fundamentalista" },
       ],
     },
   },
-
-  Difícil: {
+  dificil: {
     ruim: {
-      message:
-        "Este nível é para especialistas! Estude: Derivativos (Opções e Futuros) e Análise Técnica avançada.",
+      message: "Este nível é para especialistas! Estude: Derivativos (Opções e Futuros) e Análise Técnica avançada.",
       links: [
-        {
-          title: "Mercado de Futuros na B3",
-          url: "https://www.b3.com.br/pt_br/produtos-e-servicos/negociacao/derivativos/",
-        },
-        {
-          title: "Curso de Análise Técnica (TradingView)",
-          url: "https://br.tradingview.com/edu/",
-        },
+        { title: "Mercado de Futuros na B3", url: "https://www.b3.com.br/pt_br/produtos-e-servicos/negociacao/derivativos/" },
+        { title: "Curso de Análise Técnica (TradingView)", url: "https://br.tradingview.com/edu/" },
       ],
     },
     medio: {
-      message:
-        "Muito bom. Para gabaritar, foque em: Tributação avançada de investimentos e Cenário Macro Global.",
+      message: "Muito bom. Para gabaritar, foque em: Tributação avançada de investimentos e Cenário Macro Global.",
       links: [
-        {
-          title: "Guia Completo de Imposto de Renda (IR)",
-          url: "https://www.gov.br/receitafederal/pt-br",
-        },
-        {
-          title: "Notícias Econômicas Globais (Investing)",
-          url: "https://br.investing.com/news/economy",
-        },
+        { title: "Guia Completo de Imposto de Renda (IR)", url: "https://www.gov.br/receitafederal/pt-br" },
+        { title: "Notícias Econômicas Globais (Investing)", url: "https://br.investing.com/news/economy" },
       ],
     },
     bom: {
-      message:
-        "Parabéns, Mestre! Você tem um conhecimento avançado sobre o mercado financeiro.",
+      message: "Parabéns, Mestre! Você tem um conhecimento avançado sobre o mercado financeiro.",
       links: [
-        {
-          title: "Certificações Financeiras (Anbima)",
-          url: "https://www.anbima.com.br/pt_br/educar/certificacoes.htm",
-        },
-        {
-          title: "Relatórios de Mercado (BTG Pactual)",
-          url: "https://content.btgpactual.com/research",
-        },
+        { title: "Certificações Financeiras (Anbima)", url: "https://www.anbima.com.br/pt_br/educar/certificacoes.htm" },
+        { title: "Relatórios de Mercado (BTG Pactual)", url: "https://content.btgpactual.com/research" },
       ],
     },
   },
@@ -177,9 +109,14 @@ export function QuizResult({
   if (porcentagem >= 80) nivelFeedback = "bom";
   else if (porcentagem >= 50) nivelFeedback = "medio";
 
-  const feedback = dificuldade
-    ? feedbackMap[dificuldade][nivelFeedback]
-    : { message: "", links: [] };
+  // Normaliza o parâmetro para buscar no mapa em minúsculo e sem acento
+  const chaveDificuldade = dificuldade
+    ? dificuldade.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    : "";
+
+  const feedback = feedbackMap[chaveDificuldade]
+    ? feedbackMap[chaveDificuldade][nivelFeedback]
+    : { message: "Fim do Quiz! Parabéns por concluir o desafio.", links: [] };
 
   return (
     <div className="w-full flex items-center justify-center py-10 px-4">
@@ -189,6 +126,7 @@ export function QuizResult({
         transition={{ duration: 0.5 }}
         className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[550px]"
       >
+        {/* Lado Esquerdo - Placar Principal */}
         <div className="w-full md:w-5/12 bg-[#014635] text-white p-10 flex flex-col items-center justify-center text-center relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white to-transparent pointer-events-none" />
 
@@ -230,6 +168,7 @@ export function QuizResult({
           </div>
         </div>
 
+        {/* Lado Direito - Feedbacks e Links */}
         <div className="w-full md:w-7/12 p-8 md:p-10 flex flex-col bg-white">
           <div className="space-y-6 flex-1">
             <div>
@@ -242,10 +181,11 @@ export function QuizResult({
               </p>
             </div>
 
+            {/* Barra de Progresso Animada */}
             <div className="space-y-2">
               <div className="flex justify-between text-xs font-medium uppercase tracking-wide">
                 <span className="text-gray-400">Precisão</span>
-                <span className="text-[#014635]">
+                <span className="text-[#014635] font-bold">
                   {porcentagem.toFixed(0)}%
                 </span>
               </div>
@@ -265,6 +205,7 @@ export function QuizResult({
               </div>
             </div>
 
+            {/* Links Recomendados Dinâmicos */}
             {feedback.links.length > 0 && (
               <div className="pt-2">
                 <h4 className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3 uppercase tracking-wide">
@@ -291,10 +232,11 @@ export function QuizResult({
             )}
           </div>
 
+          {/* Botão para Reiniciar */}
           <div className="mt-8 pt-6 border-t border-gray-100">
             <Button
               onClick={onReiniciar}
-              className="group w-full bg-gray-900 hover:bg-gray-800 text-white py-6 rounded-xl text-base font-medium transition-all duration-300 flex items-center justify-between px-6"
+              className="group w-full bg-gray-900 hover:bg-gray-800 text-white py-6 rounded-xl text-base font-medium transition-all duration-300 flex items-center justify-between px-6 cursor-pointer"
             >
               <span className="flex items-center gap-2">
                 <RotateCcw className="w-4 h-4" /> Tentar Novamente
