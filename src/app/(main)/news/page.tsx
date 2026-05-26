@@ -5,39 +5,26 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, Newspaper, Clock, ArrowUpRight, Loader2 } from "lucide-react";
 import axios from "axios";
 import { NewsModal } from "@/components/news/news-modal";
-import { NewsItem } from "@/types/news";
 
-// 1. Tipagem das Notícias para o Frontend
-interface NewsItem {
-  _id: number;
-  tag: "MERCADO" | "AÇÕES" | "CRIPTO" | "FIIS" | "MACRO";
-  title: string;
-  excerpt: string;
-  content: string;
-  image: string;
-  time: string;
-  readTime: string;
-  source: string;
-  url: string; // Adicionado para suportar o link do G1
-  sentiment?: "positive" | "negative" | "neutral";
-}
+// Importação relativa direta para evitar conflitos de cache do @/
+import { NewsItem } from "../../../types/news"; 
 
 const CATEGORIES = ["TODAS", "MERCADO", "AÇÕES", "CRIPTO", "FIIS", "MACRO"];
 
 export default function NewsPage() {
   const [newsSelecionada, setNewsSelecionada] = useState<NewsItem | null>(null);
-  const [newsList, setNewsList] = useState<NewsItem[]>([]); // Corrigido: Estado adicionado com sucesso!
+  const [newsList, setNewsList] = useState<NewsItem[]>([]); 
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("TODAS");
 
-  // 2. Buscar Notícias do nosso Feed RSS (G1 Economia)
   useEffect(() => {
     async function fetchNews() {
       try {
         setLoading(true);
         const response = await axios.get("/api/news");
-        setNewsList(response.data);
+        // Força o TypeScript a entender que o retorno da API bate com a nossa interface global
+        setNewsList(response.data as NewsItem[]);
       } catch (error) {
         console.error("Erro ao carregar notícias:", error);
       } finally {
@@ -47,7 +34,6 @@ export default function NewsPage() {
     fetchNews();
   }, []);
 
-  // 3. Sistema de Filtro Inteligente
   const filteredNews = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
 
@@ -58,7 +44,7 @@ export default function NewsPage() {
 
       const matchesCategory =
         selectedCategory === "TODAS" ||
-        news.tag.toUpperCase() === selectedCategory.toUpperCase();
+        String(news.tag).toUpperCase() === selectedCategory.toUpperCase();
 
       return matchesSearch && matchesCategory;
     });
@@ -109,7 +95,7 @@ export default function NewsPage() {
           ))}
         </div>
 
-        {/* Grid de Notícias ou Estados de Loading / Vazio */}
+        {/* Grid de Notícias */}
         {loading ? (
           <div className="h-60 w-full flex flex-col items-center justify-center gap-3 text-gray-400">
             <Loader2 className="w-8 h-8 animate-spin text-[#014635]" />
@@ -167,7 +153,6 @@ export default function NewsPage() {
                       {news.excerpt}
                     </p>
 
-                    {/* O rodapé visual que indica o clique */}
                     <div className="pt-2 border-t border-gray-50 flex items-center justify-between text-xs font-bold text-[#014635] group-hover:underline">
                       <span>Ler matéria completa</span>
                       <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -180,7 +165,7 @@ export default function NewsPage() {
         )}
       </div>
 
-      {/* 4. O Modal de exibição conectado com sucesso */}
+      {/* Modal de Exibição */}
       <NewsModal 
         news={newsSelecionada} 
         onClose={() => setNewsSelecionada(null)} 

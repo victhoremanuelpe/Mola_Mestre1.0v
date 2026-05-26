@@ -9,7 +9,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { NewsItem } from "@/types/news";
+
+// Importação relativa direta saindo de components/news/ para types/
+import { NewsItem } from "../../types/news";
 
 interface NewsModalProps {
   news: NewsItem | null;
@@ -22,7 +24,6 @@ export function NewsModal({ news, onClose }: NewsModalProps) {
       <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden outline-none border-none [&>button]:cursor-pointer">
         {news && (
           <>
-            {/* Cabeçalho do Modal */}
             <div className="bg-[#014635] p-6 text-white shrink-0 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-xl" />
               <div className="relative z-10">
@@ -55,7 +56,6 @@ export function NewsModal({ news, onClose }: NewsModalProps) {
               </div>
             </div>
 
-            {/* Conteúdo do Modal */}
             <div className="flex-1 overflow-y-auto bg-white p-6">
               <DialogDescription className="text-base text-gray-700 leading-relaxed whitespace-pre-line">
                 {news.content || news.excerpt}
@@ -71,9 +71,7 @@ export function NewsModal({ news, onClose }: NewsModalProps) {
               </div>
             </div>
 
-            {/* Rodapé com Ações */}
             <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-between items-center shrink-0 z-10">
-              {/* Link externo para o G1 Economia */}
               {news.url ? (
                 <a 
                   href={news.url} 
