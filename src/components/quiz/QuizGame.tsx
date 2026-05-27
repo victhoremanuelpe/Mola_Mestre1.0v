@@ -55,13 +55,13 @@ export function QuizGame({
           <div className="flex justify-between items-center text-sm font-semibold text-gray-500 uppercase tracking-wider">
             <span className="flex items-center gap-2">
               <span
-             className={`w-2.5 h-2.5 rounded-full ${
-                dificuldade?.toLowerCase().includes("facil")
-                  ? "bg-green-500"
-                  : dificuldade?.toLowerCase().includes("medio")
-                  ? "bg-amber-500"
-                  : "bg-red-500"
-              }`}
+                className={`w-2.5 h-2.5 rounded-full ${
+                  dificuldade?.toLowerCase().includes("facil")
+                    ? "bg-green-500"
+                    : dificuldade?.toLowerCase().includes("medio")
+                    ? "bg-amber-500"
+                    : "bg-red-500"
+                }`}
               />
               Nível {dificuldade}
             </span>
@@ -81,9 +81,10 @@ export function QuizGame({
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <Card className="border-none shadow-lg bg-white overflow-hidden">
-              <CardContent className="p-6 md:p-8 space-y-6">
-                <h2 className="text-xl md:text-2xl font-bold text-gray-800 leading-relaxed">
+            <Card className="border-none shadow-lg bg-white overflow-hidden h-auto">
+              <CardContent className="p-5 md:p-8 space-y-5 md:space-y-6">
+
+                <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-800 leading-relaxed break-words hyphens-auto">
                   {pergunta.pergunta}
                 </h2>
 
@@ -116,7 +117,7 @@ export function QuizGame({
                         onClick={() => responder(i)}
                         className={`w-full p-4 rounded-xl border-2 text-left transition-all duration-200 flex justify-between items-center gap-4 cursor-pointer ${styleClass}`}
                       >
-                        <span className="text-base leading-snug">{opcao}</span>
+                        <span className="text-sm md:text-base leading-snug break-words">{opcao}</span>
                         {icon}
                       </button>
                     );
@@ -133,13 +134,13 @@ export function QuizGame({
                       transition={{ duration: 0.3 }}
                       className="overflow-hidden"
                     >
-                      <div className="mt-4 p-4 rounded-xl bg-amber-50/70 border border-amber-200/60 flex gap-3">
+                      <div className="mt-2 p-4 rounded-xl bg-amber-50/70 border border-amber-200/60 flex gap-3">
                         <Lightbulb className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                         <div className="space-y-1">
-                          <h4 className="text-sm font-bold text-amber-900 uppercase tracking-wide">
+                          <h4 className="text-xs md:text-sm font-bold text-amber-900 uppercase tracking-wide">
                             Explicação do Mestre:
                           </h4>
-                          <p className="text-sm text-amber-800 leading-relaxed">
+                          <p className="text-xs md:text-sm text-amber-800 leading-relaxed break-words">
                             {pergunta.explicacao}
                           </p>
                         </div>
@@ -158,10 +159,11 @@ export function QuizGame({
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
+              className="w-full sm:w-auto"
             >
               <Button
                 onClick={handleProxima}
-                className="bg-[#014635] hover:bg-[#00332a] text-white px-8 py-6 rounded-xl text-lg flex items-center gap-2 cursor-pointer shadow-md"
+                className="w-full sm:w-auto bg-[#014635] hover:bg-[#00332a] text-white px-8 py-5 md:py-6 rounded-xl text-base flex items-center justify-center gap-2 cursor-pointer shadow-md"
               >
                 {indiceAtual + 1 === totalPerguntas
                   ? "Ver Resultado"

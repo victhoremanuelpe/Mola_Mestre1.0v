@@ -8,13 +8,11 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // 1. Inicializa o cliente do servidor Supabase
+
   const supabase = await createServerComponentClient();
   
-  // 2. Verifica a sessão do usuário de forma ultra rápida antes de renderizar o HTML
   const { data: { user } } = await supabase.auth.getUser();
 
-  // 3. Se por algum motivo o usuário burlar o middleware ou a sessão expirar, ejeta para o login
   if (!user) {
     redirect("/login");
   }

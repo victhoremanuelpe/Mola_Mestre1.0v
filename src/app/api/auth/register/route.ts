@@ -4,12 +4,10 @@ import { registerSchema } from "@/lib/schemas/register";
 
 export async function POST(request: Request) {
   try {
-    // 1. Inicializa o cliente do Supabase para o servidor
     const supabase = await createServerComponentClient();
 
     const body = await request.json();
 
-    // 2. Mantém a sua validação do Zod funcionando perfeitamente
     const validation = registerSchema.safeParse(body);
 
     if (!validation.success) {
@@ -19,8 +17,6 @@ export async function POST(request: Request) {
 
     const { nome, email, senha } = validation.data;
 
-    // 3. Cadastra o usuário no Supabase Auth
-    // Passamos o nome dentro de 'options.data' para salvar nos metadados do usuário
     const { data, error } = await supabase.auth.signUp({
       email,
       password: senha,
@@ -31,9 +27,7 @@ export async function POST(request: Request) {
       },
     });
 
-    // 4. Trata erros do Supabase (ex: e-mail já cadastrado, senha fraca)
     if (error) {
-      // O Supabase retorna mensagens em inglês por padrão. Tratamos os casos comuns:
       if (error.message.includes("already registered") || error.status === 422) {
         return NextResponse.json(
           { erro: "Este e-mail já está em uso." },
@@ -47,7 +41,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // 5. Retorna o sucesso para o frontend exatamente no mesmo formato anterior
     return NextResponse.json(
       { msg: "Usuário cadastrado com sucesso!" },
       { status: 201 }

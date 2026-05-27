@@ -11,10 +11,8 @@ export async function fetchStocks(symbols: string[]): Promise<Stock[]> {
 
   if (!symbols || symbols.length === 0) return [];
 
-  // Formata os símbolos tirando espaços e deixando em maiúsculo (Ex: "PETR4,VALE3")
   const formattedSymbols = symbols.map(s => s.trim().toUpperCase()).join(",");
 
-  // URL configurada de acordo com as opções marcadas na imagem do painel da Brapi
   const url = `https://brapi.dev/api/quote/${formattedSymbols}?fundamental=true&dividends=true&token=${token}`;
 
   try {

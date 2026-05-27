@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServerComponentClient } from "@/lib/supabaseServer";
 
-// Função utilitária para pegar o usuário logado e validar a sessão
 async function getAuthenticatedUser(supabase: any) {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error || !user) throw new Error("Não autorizado");
@@ -23,12 +22,11 @@ export async function GET(request: Request) {
 
     if (error) throw error;
 
-    // Normaliza os nomes dos campos para manter compatibilidade total com o frontend antigo
     const frontendGoals = goals?.map((goal) => ({
       id: goal.id,
       title: goal.title,
-      targetAmount: goal.target_amount,   // Transforma snake_case para camelCase
-      currentAmount: goal.current_amount, // Transforma snake_case para camelCase
+      targetAmount: goal.target_amount,   
+      currentAmount: goal.current_amount, 
       deadline: goal.deadline,
       priority: goal.priority,
       created_at: goal.created_at
@@ -43,7 +41,6 @@ export async function GET(request: Request) {
   }
 }
 
-// 2. CRIAR META (POST)
 export async function POST(request: Request) {
   try {
     const supabase = await createServerComponentClient();
@@ -52,7 +49,6 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { title, targetAmount, currentAmount, deadline, priority } = body;
 
-    // Se a nova meta for prioritária, desativa a prioridade de todas as outras metas do usuário
     if (priority) {
       const { error: updateError } = await supabase
         .from("goals")
@@ -62,7 +58,6 @@ export async function POST(request: Request) {
       if (updateError) throw updateError;
     }
 
-    // Insere a nova meta mapeando camelCase do JSON para snake_case do Postgres
     const { data: newGoal, error } = await supabase
       .from("goals")
       .insert([
@@ -89,7 +84,6 @@ export async function POST(request: Request) {
   }
 }
 
-// 3. APORTAR VALOR NA META (PUT)
 export async function PUT(request: Request) {
   try {
     const supabase = await createServerComponentClient();
@@ -102,7 +96,6 @@ export async function PUT(request: Request) {
       return NextResponse.json({ erro: "ID e valor de aporte são necessários" }, { status: 400 });
     }
 
-    // Primeiro, buscamos a meta atual para saber o saldo existente
     const { data: goal, error: fetchError } = await supabase
       .from("goals")
       .select("current_amount")
@@ -114,10 +107,8 @@ export async function PUT(request: Request) {
       return NextResponse.json({ erro: "Meta não encontrada" }, { status: 404 });
     }
 
-    // Calcula o novo valor somado
     const newCurrentAmount = Number(goal.current_amount || 0) + Number(addAmount);
 
-    // Atualiza o registro no banco
     const { data: updatedGoal, error: updateError } = await supabase
       .from("goals")
       .update({ current_amount: newCurrentAmount })
@@ -137,7 +128,6 @@ export async function PUT(request: Request) {
   }
 }
 
-// 4. DELETAR META (DELETE)
 export async function DELETE(request: Request) {
   try {
     const supabase = await createServerComponentClient();
@@ -150,7 +140,6 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ erro: "ID necessário" }, { status: 400 });
     }
 
-    // Deleta garantindo o ID da meta e o ID do usuário dono (segurança extra)
     const { error } = await supabase
       .from("goals")
       .delete()

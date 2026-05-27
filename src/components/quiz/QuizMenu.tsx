@@ -9,7 +9,6 @@ interface QuizMenuProps {
   onStart: (nivel: Dificuldade) => void;
 }
 
-// Configuração da animação em cascata (Stagger) para os cards entrarem um por um
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   show: {

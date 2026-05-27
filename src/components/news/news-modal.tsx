@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 
-// Importação relativa direta saindo de components/news/ para types/
 import { NewsItem } from "../../types/news";
 
 interface NewsModalProps {

@@ -2,8 +2,7 @@
 
 import React, { useState } from "react";
 import axios from "axios";
-import { Loader2 } from "lucide-react"; // Ícone de carregamento
-
+import { Loader2 } from "lucide-react"; 
 import { QuizMenu } from "@/components/quiz/QuizMenu";
 import { QuizGame } from "@/components/quiz/QuizGame";
 import { QuizResult } from "@/components/quiz/QuizResult";
@@ -20,16 +19,14 @@ export default function QuizFinanceiroPage() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [acertos, setAcertos] = useState(0);
-  const [isLoading, setIsLoading] = useState(false); // Novo estado de carregamento
+  const [isLoading, setIsLoading] = useState(false);
 
   const iniciarQuiz = async (nivel: Dificuldade) => {
     setIsLoading(true);
     try {
-      // Chama a nossa rota que se comunica com a IA passando a dificuldade escolhida
       const response = await axios.get(`/api/quiz/generate?difficulty=${nivel}`);
       const perguntasGeradas = response.data;
 
-      // Armazena as perguntas vindas diretamente do cérebro da IA
       setPerguntasDaRodada(perguntasGeradas);
       setDificuldade(nivel);
       setGameState("playing");
@@ -60,7 +57,6 @@ export default function QuizFinanceiroPage() {
     setGameState("menu");
   };
 
-  // Tela de transição inteligente enquanto a IA formata a prova
   if (isLoading) {
     return (
       <div className="flex flex-col h-[calc(100vh-100px)] items-center justify-center bg-gray-50/50 space-y-4">

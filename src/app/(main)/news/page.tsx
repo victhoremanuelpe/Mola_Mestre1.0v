@@ -6,7 +6,6 @@ import { Search, Newspaper, Clock, ArrowUpRight, Loader2 } from "lucide-react";
 import axios from "axios";
 import { NewsModal } from "@/components/news/news-modal";
 
-// Importação relativa direta para evitar conflitos de cache do @/
 import { NewsItem } from "../../../types/news"; 
 
 const CATEGORIES = ["TODAS", "MERCADO", "AÇÕES", "CRIPTO", "FIIS", "MACRO"];
@@ -23,7 +22,6 @@ export default function NewsPage() {
       try {
         setLoading(true);
         const response = await axios.get("/api/news");
-        // Força o TypeScript a entender que o retorno da API bate com a nossa interface global
         setNewsList(response.data as NewsItem[]);
       } catch (error) {
         console.error("Erro ao carregar notícias:", error);

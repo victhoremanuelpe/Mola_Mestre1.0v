@@ -23,5 +23,4 @@ export function QueryProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// A exportação padrão vai AQUI, no arquivo do QueryProvider!
 export default QueryProvider;

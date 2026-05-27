@@ -1,20 +1,17 @@
 import { NextResponse } from "next/server";
 import { createServerComponentClient } from "@/lib/supabaseServer";
 
-// Função utilitária para capturar e validar o usuário logado
 async function getAuthenticatedUser(supabase: any) {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error || !user) throw new Error("Não autorizado");
   return user;
 }
 
-// 1. BUSCAR HISTÓRICO DE TRANSAÇÕES (GET)
 export async function GET() {
   try {
     const supabase = await createServerComponentClient();
     const user = await getAuthenticatedUser(supabase);
 
-    // Busca todas as transações do usuário ordenadas pela data da operação (decrescente)
     const { data: transactions, error } = await supabase
       .from("transactions")
       .select("*")
@@ -35,7 +32,6 @@ export async function GET() {
   }
 }
 
-// 2. REGISTRAR NOVA OPERAÇÃO (POST)
 export async function POST(request: Request) {
   try {
     const supabase = await createServerComponentClient();
@@ -44,16 +40,13 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { ticker, tipo, quantidade, preco, data } = body;
 
-    // Validação de campos obrigatórios
     if (!ticker || !tipo || !quantidade || !preco) {
       return NextResponse.json({ erro: "Dados incompletos" }, { status: 400 });
     }
 
     const qtdNumber = Number(quantidade);
 
-    // Validação de saldo caso a operação seja de VENDA
     if (tipo === "VENDA") {
-      // Busca apenas o histórico do ativo específico para este usuário
       const { data: historicoAtivo, error: fetchError } = await supabase
         .from("transactions")
         .select("tipo, quantidade")
@@ -62,14 +55,12 @@ export async function POST(request: Request) {
 
       if (fetchError) throw fetchError;
 
-      // Calcula o saldo atual acumulado em carteira
       const saldoAtual = (historicoAtivo || []).reduce((acc, tx) => {
         if (tx.tipo === "COMPRA") return acc + Number(tx.quantidade);
         if (tx.tipo === "VENDA") return acc - Number(tx.quantidade);
         return acc;
       }, 0);
 
-      // Bloqueia a venda se a quantidade solicitada for maior que o saldo em carteira
       if (qtdNumber > saldoAtual) {
         return NextResponse.json(
           {
@@ -80,7 +71,6 @@ export async function POST(request: Request) {
       }
     }
 
-    // Insere o novo registro no PostgreSQL via Supabase
     const { data: newTransaction, error: insertError } = await supabase
       .from("transactions")
       .insert([
@@ -98,7 +88,6 @@ export async function POST(request: Request) {
 
     if (insertError) throw insertError;
 
-    // Mantém o exato formato de resposta que o frontend já consome
     return NextResponse.json(
       { msg: "Lançamento adicionado!", transaction: newTransaction },
       { status: 201 }

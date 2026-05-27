@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Trophy,
@@ -9,9 +10,11 @@ import {
   RotateCcw,
   ExternalLink,
   BookOpenCheck,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dificuldade } from "@/types/quiz";
+import axios from "axios";
 
 interface QuizResultProps {
   acertos: number;
@@ -25,7 +28,7 @@ type FeedbackContent = {
   links: { title: string; url: string }[];
 };
 
-const feedbackMap: Record<string, Record<"ruim" | "medio" | "bom", FeedbackContent>> = {
+const feedbackMapFallback: Record<string, Record<"ruim" | "medio" | "bom", FeedbackContent>> = {
   facil: {
     ruim: {
       message: "Você está no início. Recomendamos estudar: O que é inflação, Juros Compostos e o Tripé Macroeconômico.",
@@ -104,19 +107,51 @@ export function QuizResult({
   onReiniciar,
 }: QuizResultProps) {
   const porcentagem = (acertos / totalPerguntas) * 100;
-  let nivelFeedback: "ruim" | "medio" | "bom" = "ruim";
+  
+  const [feedback, setFeedback] = useState<FeedbackContent | null>(null);
+  const [loadingIA, setLoadingIA] = useState(true);
 
+  let nivelFeedback: "ruim" | "medio" | "bom" = "ruim";
   if (porcentagem >= 80) nivelFeedback = "bom";
   else if (porcentagem >= 50) nivelFeedback = "medio";
 
-  // Normaliza o parâmetro para buscar no mapa em minúsculo e sem acento
-  const chaveDificuldade = dificuldade
-    ? dificuldade.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    : "";
+  useEffect(() => {
+    async function fetchAIFeedback() {
+      try {
+        setLoadingIA(true);
+        const response = await axios.post("/api/quiz/feedback", {
+          acertos,
+          totalPerguntas,
+          dificuldade,
+        });
 
-  const feedback = feedbackMap[chaveDificuldade]
-    ? feedbackMap[chaveDificuldade][nivelFeedback]
-    : { message: "Fim do Quiz! Parabéns por concluir o desafio.", links: [] };
+        if (response.data && response.data.message) {
+          setFeedback(response.data);
+        } else {
+          triggerFallback();
+        }
+      } catch (err) {
+        console.error("Erro na requisição de IA, usando backup local", err);
+        triggerFallback();
+      } finally {
+        setLoadingIA(false);
+      }
+    }
+
+    function triggerFallback() {
+      const chaveDificuldade = dificuldade
+        ? dificuldade.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        : "";
+      
+      const localFeedback = feedbackMapFallback[chaveDificuldade]
+        ? feedbackMapFallback[chaveDificuldade][nivelFeedback]
+        : { message: "Fim do Quiz! Parabéns por concluir o desafio.", links: [] };
+      
+      setFeedback(localFeedback);
+    }
+
+    fetchAIFeedback();
+  }, [acertos, totalPerguntas, dificuldade, nivelFeedback]);
 
   return (
     <div className="w-full flex items-center justify-center py-10 px-4">
@@ -168,17 +203,27 @@ export function QuizResult({
           </div>
         </div>
 
-        {/* Lado Direito - Feedbacks e Links */}
+        {/* Lado Direito - Feedbacks da IA e Links */}
         <div className="w-full md:w-7/12 p-8 md:p-10 flex flex-col bg-white">
           <div className="space-y-6 flex-1">
             <div>
               <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-3">
                 <Lightbulb className="w-5 h-5 text-yellow-500 fill-yellow-500" />
-                Análise de Desempenho
+                Análise de Desempenho Inteligente
               </h3>
-              <p className="text-gray-600 leading-relaxed text-sm">
-                {feedback.message}
-              </p>
+              
+            <div className="min-h-[80px] flex flex-col justify-center"> 
+              {loadingIA ? (
+                <div className="space-y-2 animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-full"></div>
+                  <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                </div>
+              ) : (
+                <p className="text-gray-600 leading-relaxed text-sm line-clamp-3 overflow-hidden text-ellipsis">
+                  {feedback?.message}
+                </p>
+              )}
+            </div>
             </div>
 
             {/* Barra de Progresso Animada */}
@@ -205,8 +250,8 @@ export function QuizResult({
               </div>
             </div>
 
-            {/* Links Recomendados Dinâmicos */}
-            {feedback.links.length > 0 && (
+            {/* Links Recomendados Dinâmicos pela IA */}
+            {!loadingIA && feedback && feedback.links.length > 0 && (
               <div className="pt-2">
                 <h4 className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3 uppercase tracking-wide">
                   <BookOpenCheck className="w-4 h-4 text-[#014635]" />

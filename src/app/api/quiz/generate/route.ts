@@ -2,14 +2,12 @@ import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function GET(request: Request) {
-  // Guardamos o nível aqui fora para uso no catch se a IA falhar
   let nivel = "facil"; 
 
   try {
     const { searchParams } = new URL(request.url);
     const difficultyParam = searchParams.get("difficulty") || "facil";
 
-    // 1. Normaliza a dificuldade (Remove acentos, espaços e joga para minúsculo)
     nivel = difficultyParam
       .toLowerCase()
       .normalize("NFD")
@@ -23,10 +21,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ erro: "Chave da IA não configurada." }, { status: 500 });
     }
 
-    // 2. Inicializa o SDK oficial do Google Gemini
     const ai = new GoogleGenerativeAI(apiKey);
     
-    // Usamos o modelo oficial 2.5-flash com resposta travada em JSON
     const model = ai.getGenerativeModel({ 
       model: "gemini-2.5-flash",
       generationConfig: { responseMimeType: "application/json" } 
@@ -65,10 +61,8 @@ export async function GET(request: Request) {
   } catch (error: any) {
     console.error("Erro interno no motor da IA (Acionando Fallback de Segurança):", error);
 
-    // 🚨 SISTEMA DE BACKUP LOCAL: Se a Google cair ou der 503, o app não para!
     const fallbackQuestions = FALLBACK_QUESTIONS.filter((q) => q.dificuldade === nivel);
     
-    // Embaralha as perguntas locais e entrega uma rodada válida
     const rodadaBackup = fallbackQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
 
     if (rodadaBackup.length > 0) {
@@ -82,9 +76,7 @@ export async function GET(request: Request) {
   }
 }
 
-// 📦 BANCO DE DADOS DE BACKUP INTEGRADO (Fica aqui caso a API falhe)
 const FALLBACK_QUESTIONS = [
-  // NÍVEL FÁCIL
   {
     id: "f1",
     dificuldade: "facil",
@@ -112,7 +104,6 @@ const FALLBACK_QUESTIONS = [
     explicacao: "A reserva de emergência serve para trazer segurança financeira diante de imprevistos do dia a dia, evitando empréstimos e juros altos."
   },
   
-  // NÍVEL MÉDIO
   {
     id: "m1",
     dificuldade: "medio",
@@ -140,7 +131,6 @@ const FALLBACK_QUESTIONS = [
     explicacao: "O P/L indica a relação entre o preço atual da ação e o lucro por ação. Grosso modo, dá uma estimativa de anos para o retorno do capital investido."
   },
 
-  // NÍVEL DIFÍCIL
   {
     id: "d1",
     dificuldade: "dificil",

@@ -1,7 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-// Cliente isolado para rodar no Backend (Route Handlers / Server Components)
 export const createServerComponentClient = async () => {
   const cookieStore = await cookies() 
 
@@ -19,7 +18,6 @@ export const createServerComponentClient = async () => {
               cookieStore.set(name, value, options)
             )
           } catch {
-            // Tratado com segurança para Server Components estáticos
           }
         },
       },

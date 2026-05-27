@@ -30,9 +30,9 @@ export function AuthLayout({
             <Image
               src={logo}
               alt="Logo Completa"
-              fill // Faz a imagem ocupar o espaço da caixinha acima
-              className="object-contain object-left" // Garante que ela não distorça e alinhe à esquerda
-              priority // Força o carregamento imediato na tela de login
+              fill 
+              className="object-contain object-left" 
+              priority
             />
           </div>
         </div>
