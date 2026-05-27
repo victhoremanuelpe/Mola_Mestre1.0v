@@ -55,6 +55,9 @@ export default function QuizFinanceiroPage() {
   const reiniciar = () => {
     setDificuldade(null);
     setGameState("menu");
+    setPerguntasDaRodada([]);
+    setCurrentIndex(0);
+    setAcertos(0);
   };
 
   if (isLoading) {
@@ -69,11 +72,13 @@ export default function QuizFinanceiroPage() {
     );
   }
 
-  return (
-    <div className="w-full h-[calc(100vh-100px)] overflow-hidden">
+return (
+    <div className="w-full h-[calc(100vh-80px)] overflow-y-auto bg-gray-50/30 flex flex-col justify-start md:justify-center items-center p-4 md:p-6 scrollbar-thin">
       {gameState === "menu" && <QuizMenu onStart={iniciarQuiz} />}
 
-      {gameState === "playing" && perguntasDaRodada.length > 0 && (
+      {gameState === "playing" && 
+       perguntasDaRodada.length > 0 && 
+       perguntasDaRodada[currentIndex] !== undefined && (
         <QuizGame
           pergunta={perguntasDaRodada[currentIndex]}
           indiceAtual={currentIndex}
