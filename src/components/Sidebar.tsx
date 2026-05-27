@@ -18,6 +18,7 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import logo from '@/../public/logo2.png';
 
 const menuItems = [
   { icon: LayoutDashboard, name: "Dashboard", href: "/dashboard" },
@@ -90,7 +91,7 @@ export function Sidebar() {
         >
           <div className="w-46 h-14 relative">
             <Image
-              src="/logo2.png"
+              src={logo}
               alt="Logo Completa"
               fill
               className="object-contain"

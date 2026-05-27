@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import logo from '@/../public/logo2.png';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -24,16 +25,17 @@ export function AuthLayout({
         <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent pointer-events-none" />
 
         <div className="z-10">
-          <Image
-            src="/logo2.png"
-            alt="Logo Completa"
-            width={200}
-            height={60}
-            className="object-contain w-40 md:w-52 h-auto"
-            priority
-          />
+          {/* Criamos uma caixinha com tamanho controlado pelo Tailwind */}
+          <div className="relative w-40 md:w-52 h-14">
+            <Image
+              src={logo}
+              alt="Logo Completa"
+              fill // Faz a imagem ocupar o espaço da caixinha acima
+              className="object-contain object-left" // Garante que ela não distorça e alinhe à esquerda
+              priority // Força o carregamento imediato na tela de login
+            />
+          </div>
         </div>
-
         <div className="z-10 space-y-4 text-white/90 max-w-lg">
           <h1 className="text-4xl font-bold tracking-tight text-white">
             Domine suas finanças, transforme seu futuro.
